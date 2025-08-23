@@ -34,3 +34,17 @@ class Main {
     }
 }
 ```
+
+### Write a java program to check given number is even or odd ,by not using any conditional and looping statement.
+
+```java
+// Write a java program to check given number is even or odd ,by not using any conditional and looping statement. 
+
+class Main {
+    public static void main(String[] args) {
+        int n =17;
+        String[] arr={"even","odd"};
+        System.out.println("this is a "+arr[n%2]+" number.");
+    }
+}
+```
