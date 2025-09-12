@@ -437,6 +437,554 @@ Maven has **three built-in lifecycles**:
 | **Super POM** | Default parent POM with built-in configs. |
 | **Effective POM** | Final merged POM (Super + Parent + Current). |
 
+# 🎯**Topic-wise task plan for grip on maven**
+
+below is a **linear, topic-wise task plan** that will make you *actually do* every important Maven concept used in real-world Automation Testing (Selenium + TestNG). Follow tasks in order. Each task has: **Goal → Exact commands / snippets → How to verify → Short explanation / tip**. Do them one-by-one — this will give you practical mastery.
+
+# 1) Prerequisites & quick checks
+
+Goal: confirm environment is ready.  
+Commands:
+
+```xml
+java -version
+mvn -v
+git --version
+```
+
+Verify: each prints a version and no errors.  
+Tip: Maven needs JDK; `JAVA_HOME` must be set.
+
+---
+
+# 2) Create a starter project (archetype)
+
+Goal: scaffold a Maven project skeleton.  
+Command:
+
+```xml
+mvn archetype:generate -DgroupId=com.practice.automation -DartifactId=selenium-maven \
+  -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+cd selenium-maven
+```
+
+Verify: `pom.xml`, `src/main/java`, `src/test/java` exist.  
+Why: gives a basic pom to extend.
+
+---
+
+# 3) Basic build lifecycle run
+
+Goal: run the default lifecycle and inspect outputs.  
+Commands:
+
+```xml
+mvn clean
+mvn compile
+mvn test
+mvn package
+```
+
+Verify: `target/` created, compiled classes in `target/classes`, JAR in `target/`.  
+Why: see how phases map to file system results.
+
+---
+
+# 4) Add core automation dependencies
+
+Goal: modify `pom.xml` to add Selenium, TestNG, WebDriverManager.  
+Snippet (inside `<dependencies>`):
+
+```xml
+<dependency>
+  <groupId>org.seleniumhq.selenium</groupId>
+  <artifactId>selenium-java</artifactId>
+  <version>4.23.0</version>
+</dependency>
+<dependency>
+  <groupId>org.testng</groupId>
+  <artifactId>testng</artifactId>
+  <version>7.10.0</version>
+  <scope>test</scope>
+</dependency>
+<dependency>
+  <groupId>io.github.bonigarcia</groupId>
+  <artifactId>webdrivermanager</artifactId>
+  <version>5.9.2</version>
+</dependency>
+```
+
+Command:
+
+```xml
+mvn clean test
+```
+
+Verify: Maven downloads dependencies into `~/.m2/repository` and tests run.  
+Tip: inspect `~/.m2/repository/org/seleniumhq/selenium-java`.
+
+---
+
+# 5) Understand dependency scopes & transitive deps
+
+Task A — scopes:
+
+* Add a small example dependency with `<scope>provided</scope>` and run `mvn test` → observe it isn’t on runtime classpath.  
+    Task B — transitive:
+    
+* Add a dependency that brings transitive ones, then run:
+    
+
+```xml
+mvn dependency:tree
+```
+
+Verify: see full tree and identify transitive nodes.  
+Why: you must be able to read the tree and reason about conflicts.
+
+---
+
+# 6) Resolve dependency conflicts (practice)
+
+Goal: simulate conflicting transitive versions and fix them.  
+Steps:
+
+1. Add two dependencies that depend on different versions of the same artifact (e.g., add two libraries known to cause conflict or simulate by adding a direct dependency with older version).
+    
+2. Run:
+    
+
+```xml
+mvn dependency:tree
+```
+
+3. Fix by:
+    
+    * adding `<exclusion>` in the dependency that brings unwanted version, **or**
+        
+    * adding the correct version in `<dependencyManagement>` of parent POM.  
+        Verify: `dependency:tree` shows intended version only.
+        
+
+---
+
+# 7) Use `dependencyManagement` in a parent POM
+
+Goal: centralize versions for multi-module projects.  
+Steps:
+
+1. Create a parent `pom.xml` with `<packaging>pom</packaging>` and `<dependencyManagement>` listing versions.
+    
+2. Create child modules and use dependencies without versions.  
+    Command:
+    
+
+```xml
+mvn -pl child-module clean test
+```
+
+Verify: child builds use versions from parent.  
+Why: makes version control easier in enterprise projects.
+
+---
+
+# 8) Effective POM & Super POM
+
+Goal: learn how defaults are inherited.  
+Command:
+
+```xml
+mvn help:effective-pom
+```
+
+Verify: examine merged config (Super POM + your POM).  
+Why: helps debug default plugin versions & behaviors.
+
+---
+
+# 9) Configure Surefire + TestNG suite + run selective tests
+
+Steps:
+
+1. Add a `testng.xml` in project root containing your suite and parallel settings.
+    
+2. Configure `maven-surefire-plugin` in `pom.xml` to point to the suite.
+    
+3. Run:
+    
+
+```xml
+mvn -Dtest=MyTest#myMethod test
+```
+
+Verify: only that method/class runs; surefire reports appear in `target/surefire-reports`.  
+Tip: learn `-Dtest`, `-Dgroups`, and surefire config.
+
+---
+
+# 10) Headless runs via system property
+
+Goal: pass headless flag to tests dynamically.  
+Code pattern (in your test base):
+
+```xml
+boolean headless = Boolean.getBoolean("headless"); // default is false
+if(headless) options.addArguments("--headless=new");
+```
+
+Run with:
+
+```xml
+mvn clean test -Dheadless=true
+```
+
+Verify: browsers start in headless mode; reuse `-Dheadless=false` to run visibly.
+
+---
+
+# 11) Make WebDriver Thread-safe (ThreadLocal)
+
+Goal: enable proper parallel runs.  
+Task:
+
+* Implement a `DriverFactory` using `ThreadLocal<WebDriver>` and use it in @Before/@After.  
+    Verify: parallel tests do not share drivers and do not interfere.
+    
+
+---
+
+# 12) Parallel execution (TestNG + Maven)
+
+Goal: run tests in parallel and observe behavior.  
+Approach:
+
+* Configure `testng.xml` with `parallel="methods"` or `parallel="tests"` and set `thread-count`.
+    
+* Or configure `<parallel>` and `<threadCount>` in Surefire `<configuration>`.  
+    Run:
+    
+
+```xml
+mvn clean test -Dheadless=true
+```
+
+Verify: multiple sessions run concurrently; monitor CPU and logs.
+
+---
+
+# 13) Reporting: Surefire, ExtentReports, Allure
+
+Tasks:  
+A. Surefire default: run tests and inspect `target/surefire-reports/*.xml` and `*.txt`.  
+B. ExtentReports: add dependency, create Extent init in `@BeforeSuite`, log in tests, flush in `@AfterSuite`; open `target/extent-report.html`.  
+C. Allure: add `allure-testng` dependency and `allure-maven` plugin. After `mvn clean test` run:
+
+```xml
+allure serve target/allure-results
+```
+
+Verify: reports show steps, screenshots (if added), attachments.
+
+---
+
+# 14) Add screenshots on failure and attach to reports
+
+Task:
+
+* Capture screenshot in `@AfterMethod` on failure and save to `target/screenshots`.
+    
+* Attach file path to Extent or Allure result.  
+    Verify: screenshot visible in report when test fails.
+    
+
+---
+
+# 15) Create multi-module project (Parent + modules)
+
+Goal: split utilities vs tests into modules.  
+Steps:
+
+1. Parent POM with `<modules>` listing `automation-core` and `automation-tests`.
+    
+2. `automation-core` contains `DriverFactory`, `BaseTest`, utilities.
+    
+3. `automation-tests` depends on `automation-core`.  
+    Commands:
+    
+
+```xml
+mvn clean install   # from parent
+```
+
+Verify: parent builds children; artifacts installed in local repo.
+
+---
+
+# 16) Packaging and fat-jar (shade)
+
+Goal: create a runnable fat JAR if needed for distribution.  
+Add `maven-shade-plugin` config:
+
+```xml
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-shade-plugin</artifactId>
+  <version>3.4.1</version>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals><goal>shade</goal></goals>
+    </execution>
+  </executions>
+</plugin>
+```
+
+Run:
+
+```xml
+mvn clean package
+```
+
+Verify: `target/<artifact>-shaded.jar` created and includes dependencies.
+
+---
+
+# 17) Snapshot vs Release & deploy (local → remote)
+
+Task A — SNAPSHOT:
+
+* Set version to `1.0-SNAPSHOT`. Build & `mvn install` → check local repo path.  
+    Task B — release:
+    
+* Change to `1.0` and use `maven-release-plugin` or manually set version and `mvn deploy`.  
+    Task C — set up `distributionManagement` for remote repo (Nexus/Artifactory) and deploy:
+    
+
+```xml
+<distributionManagement>
+  <repository><id>company-repo</id><url>http://nexus.company/repo/releases</url></repository>
+  <snapshotRepository><id>company-snapshots</id><url>http://nexus.company/repo/snapshots</url></snapshotRepository>
+</distributionManagement>
+```
+
+Verify: artifacts appear in Nexus or local `~/.m2`.
+
+---
+
+# 18) Setup & use `settings.xml` (mirrors, servers, credentials)
+
+Task:
+
+* Create/edit `~/.m2/settings.xml` with `<mirrors>` pointing to Nexus and `<servers>` with credentials for deploy.  
+    Example snippet:
+    
+
+```xml
+<servers>
+  <server>
+    <id>company-repo</id>
+    <username>deploy_user</username>
+    <password>******</password>
+  </server>
+</servers>
+```
+
+Verify: `mvn deploy` authenticates & uploads artifact.
+
+---
+
+# 19) Offline builds & cache
+
+Task:
+
+* Populate `~/.m2` by running an online build.
+    
+* Simulate offline build:
+    
+
+```xml
+mvn -o clean package
+```
+
+Verify: build succeeds when all deps present locally; fails if missing.  
+Tip: practice how to prepare an agent to run offline.
+
+---
+
+# 20) Force update & debugging
+
+Commands to practice:
+
+* Force update dependencies from remotes:
+    
+
+```xml
+mvn clean install -U
+```
+
+* Debug a failing build:
+    
+
+```xml
+mvn -X test
+mvn -e test
+```
+
+Verify: logs show verbose stack and dependency resolution details.
+
+---
+
+# 21) Maven profiles (dev/test/prod)
+
+Task:
+
+1. Add `<profiles>` to `pom.xml` with different properties (e.g., `baseUrl`, `browser`, `headless`).
+    
+2. Run:
+    
+
+```xml
+mvn test -Pdev
+mvn test -Pprod -Dheadless=true
+```
+
+Verify: different profiles change behavior (URLs, timeouts).
+
+---
+
+# 22) Archetypes — create a reusable template
+
+Task:
+
+* Create a custom archetype of your framework skeleton and generate a new project from it:
+    
+
+```xml
+mvn archetype:create-from-project
+cd target/generated-sources/archetype
+mvn install
+mvn archetype:generate -DarchetypeGroupId=... -DarchetypeArtifactId=...
+```
+
+Verify: new project is created using your template.
+
+---
+
+# 23) Generate site & project reports
+
+Commands:
+
+```xml
+mvn site
+mvn site:run
+```
+
+Verify: local site with project reports opens (dependencies, surefire summary, javadocs if added).
+
+---
+
+# 24) Integration with Jenkins (CI)
+
+Task:
+
+* Create a Jenkins Pipeline (Jenkinsfile) that:
+    
+    * checks out code
+        
+    * uses specific JDK & Maven
+        
+    * runs `mvn clean test -Dheadless=true -U`
+        
+    * archives artifacts and publishes reports (junit/allure/html)
+        
+* Configure Jenkins tools & `settings.xml` for Nexus.  
+    Verify: pipeline runs, test results appear in Jenkins, artifacts published.
+    
+
+---
+
+# 25) Fix missing dependencies on Jenkins agents
+
+Troubleshoot steps:
+
+1. Run `mvn -U` on agent to force download.
+    
+2. Check network/proxy; ensure agent can reach Nexus/Maven Central.
+    
+3. Place a proper `settings.xml` on Jenkins with mirror-server and credentials.  
+    Verify: build no longer fails due to missing deps.
+    
+
+---
+
+# 26) Troubleshooting exercises (do these deliberately)
+
+A. Delete a dependency folder from `~/.m2` and run `mvn -o` → observe failure.  
+B. Run `mvn dependency:analyze` and act on unused/undeclared dependencies.  
+C. Simulate corrupted artifact in `~/.m2` (e.g., remove jar size) → run `mvn -U` to fix.
+
+---
+
+# 27) Advanced: write a tiny Maven plugin (optional)
+
+Goal: understand plugin mechanism & Plexus.  
+Steps:
+
+1. Create new project with `packaging` = `maven-plugin`.
+    
+2. Add a Mojo (Java class annotated with `@Mojo`) that prints a message or performs a simple file copy.
+    
+3. `mvn install` the plugin and then use it in another project’s `pom.xml` under `<plugins>`.  
+    Verify: plugin goal runs during the lifecycle and your message appears in build logs.  
+    Why: helps you understand how Maven delegates to plugins.
+    
+
+---
+
+# 28) Best-practice checklist (final)
+
+Make sure you can:
+
+* Explain lifecycle vs phase vs goal.
+    
+* Read and fix `dependency:tree`.
+    
+* Use `dependencyManagement` and parent POM.
+    
+* Configure `surefire` and TestNG suites.
+    
+* Build parallel, thread-safe tests with ThreadLocal drivers.
+    
+* Generate Extent/Allure reports and attach screenshots.
+    
+* Use `settings.xml`, `distributionManagement` and perform `deploy` to a remote repo.
+    
+* Debug builds with `-X` and fix Jenkins dependency issues.
+    
+* Create multi-module project and manage versions centrally.
+    
+
+---
+
+# 29) Self-test mini-project (put it all together)
+
+Goal: create a mini real-world repo that demonstrates everything.  
+Requirements:
+
+* Parent POM with `dependencyManagement`.
+    
+* `core` module (DriverFactory, utilities).
+    
+* `tests` module (several TestNG classes, TestNG xml parallel).
+    
+* ExtentReports and screenshot-on-failure.
+    
+* Jenkinsfile for CI to run `mvn clean test -Dheadless=true -U` and publish reports.
+    
+* Deploy the produced artifact to a local Nexus or simulate by copying into a file-repo configured in `distributionManagement`.  
+    Verify: CI runs green, artifact appears in Nexus, reports accessible, and you can run offline using `mvn -o` after pre-caching.
+    
+
 # 📌 **Maven Interview Questions for Automation Testers**
 
 ---
