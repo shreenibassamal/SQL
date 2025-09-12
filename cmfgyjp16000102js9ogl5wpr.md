@@ -1,8 +1,8 @@
 ---
-title: "Maven tool"
+title: "Maven for Automation Testing"
 datePublished: Fri Sep 12 2025 14:53:49 GMT+0000 (Coordinated Universal Time)
 cuid: cmfgyjp16000102js9ogl5wpr
-slug: maven-tool
+slug: maven-for-automation-testing
 tags: shreenibas
 
 ---
