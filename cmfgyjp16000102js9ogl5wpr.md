@@ -121,6 +121,86 @@ Before learning Maven, you should know:
 ✅ **Summary in One Line**:  
 Maven is a **Java project management & build tool (introduced in 2004)** that came to **solve dependency hell and build standardization problems**, used widely in **Java, Selenium, Spring Boot projects**, and requires **basic Java + XML knowledge** before starting.
 
+## 🔄 **Maven Workflow Diagram**
+
+```xml
+                ┌───────────────────┐
+                │   Developer       │
+                │ runs Maven cmd    │
+                │ (e.g., mvn test)  │
+                └─────────┬─────────┘
+                          │
+                          ▼
+                ┌───────────────────┐
+                │     POM.xml       │
+                │ (Project Object   │
+                │   Model file)     │
+                └─────────┬─────────┘
+                          │
+      ┌───────────────────┼───────────────────┐
+      ▼                   ▼                   ▼
+┌───────────────┐  ┌───────────────┐   ┌─────────────────┐
+│ Maven Local   │  │ Maven Central │   │ Other Repos     │
+│ Repository    │  │ Repository    │   │ (Company, 3rd)  │
+│ (~/.m2)       │  │ Online source │   │                 │
+└───────┬───────┘  └───────────────┘   └─────────────────┘
+        │
+        ▼
+   Dependencies
+   downloaded once
+   & stored locally
+        │
+        ▼
+┌───────────────────-┐
+│   Maven Lifecycle  │
+│  (Phases/Goals)    │
+│ compile → test →   │
+│ package → verify → │
+│ install → deploy   │
+└─────────┬─────────-┘
+          │
+          ▼
+┌──────────────────-─┐
+│   Build Output     │
+│   (JAR/WAR, Test   │
+│    Reports, etc.)  │
+└───────────────────-┘
+```
+
+---
+
+## 📝 **Explanation of Flow**
+
+1. **You run a Maven command** (e.g., `mvn clean install`).
+    
+2. Maven checks the **POM.xml** to see project details (dependencies, plugins, version).
+    
+3. Maven looks for required dependencies:
+    
+    * First in **Local Repository** (`~/.m2` folder).
+        
+    * If not found, it downloads from **Maven Central Repository** (online).
+        
+    * Or from **Custom Company Repository** (like Nexus/Artifactory).
+        
+4. Dependencies are **cached locally** so they don’t download again.
+    
+5. Maven executes **build lifecycle phases** in order:
+    
+    * `validate → compile → test → package → verify → install → deploy`.
+        
+6. Finally, Maven produces **output** (like `.jar` or `.war` file, test reports, logs).
+    
+
+---
+
+👉 This is why Maven is powerful:
+
+* You only need a **POM.xml**.
+    
+* Maven does everything automatically (download, compile, test, build).
+    
+
 # 🔑 **Maven Components and Their Work**
 
 ---
