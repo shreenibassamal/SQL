@@ -1,8 +1,8 @@
 ---
-title: "Gtit & Github"
+title: "Gtit & Github For Automation Tester"
 datePublished: Thu Sep 11 2025 01:47:40 GMT+0000 (Coordinated Universal Time)
 cuid: cmfer0uc6000802kw7opde1eb
-slug: gtit-and-github
+slug: gtit-and-github-for-automation-tester
 tags: shreenibas
 
 ---
