@@ -157,7 +157,101 @@ A **Web Server** is software that **accepts client (browser) requests and serves
 
 ### Types of Web Resources?
 
+## 🔹 **Types of Web Resources**
+
+In web technology, a **web resource** is anything that can be identified and accessed on the web through a **URL**.
+
+### Common Types:
+
+1. **Static Resources** → Fixed content that does not change.
+    
+    * Examples: HTML files, CSS, JavaScript, images, videos, PDFs.
+        
+2. **Dynamic Resources** → Content generated at runtime by server-side code.
+    
+    * Examples: JSP, Servlets, PHP scripts, [ASP.NET](http://ASP.NET) pages, REST API responses.
+        
+3. **Services (APIs / Endpoints)** → Web services or APIs that expose data and operations.
+    
+    * Examples: [`https://api.github.com/users`](https://api.github.com/users), SOAP services.
+        
+4. **Other Media Resources** → Audio, video, documents, fonts delivered via the web.
+    
+
+👉 In short:  
+**Web resources = Any file, document, or service that can be accessed over the web using a URL.**
+
 ### What is URL explain with syntax ?
+
+## 🔹 **What is URL?**
+
+**URL (Uniform Resource Locator)** is the address used to identify and access a resource on the internet.  
+It tells the browser **where the resource is located** and **how to fetch it**.
+
+---
+
+### 🔹 **Syntax of a URL**
+
+```java
+protocol://hostname:port/path?query#fragment
+```
+
+### 🔹 Explanation of Parts
+
+1. **protocol** → Communication method (e.g., `http`, `https`, `ftp`).
+    
+    * Example: `https`
+        
+2. **hostname (domain name / IP)** → The server hosting the resource.
+    
+    * Example: [`www.google.com`](http://www.google.com)
+        
+3. **port** → The communication endpoint (optional, defaults: 80 for HTTP, 443 for HTTPS).
+    
+    * Example: `:8080`
+        
+4. **path** → Location of the resource on the server.
+    
+    * Example: `/products/list`
+        
+5. **query string** → Extra parameters in key=value pairs (after `?`).
+    
+    * Example: `?id=10&sort=asc`
+        
+6. **fragment** → A section inside the page (after `#`).
+    
+    * Example: `#section2`
+        
+
+---
+
+### 🔹 Example URL
+
+```java
+https://www.amazon.in:443/laptops?brand=hp&sort=price#reviews
+```
+
+* **protocol** → `https`
+    
+* **hostname** → [`www.amazon.in`](http://www.amazon.in)
+    
+* **port** → `443`
+    
+* **path** → `/laptops`
+    
+* **query** → `brand=hp&sort=price`
+    
+* **fragment** → `reviews`
+    
+
+---
+
+✅ **In short:**
+
+* **Web Resources** = Any static/dynamic file or service accessible on the web.
+    
+* **URL** = The complete web address used to locate and access those resources.
+    
 
 * URL or WebURL is used to uniquely identify the specific web resources within the web application.
     
@@ -290,6 +384,41 @@ Its optional information and case insensitive
 ### What is SOAP Web Services?
 
 ### What is .WSDL ?
+
+### 🔹 **WSDL (Web Services Description Language)**
+
+**Definition (short):**  
+WSDL is an **XML-based language** used to **describe the functionality of a web service**, including its **methods, input/output parameters, data types, and endpoint URLs**.
+
+**Key Points:**
+
+* Used mainly with **SOAP web services**.
+    
+* Acts like a **contract** between service provider and consumer.
+    
+* Enables clients to **generate code or requests** automatically.
+    
+
+**Example:**
+
+```xml
+<definitions name="HelloService"
+             targetNamespace="http://example.com/hello"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <message name="SayHelloRequest">
+        <part name="firstName" type="xsd:string"/>
+    </message>
+    <portType name="Hello_PortType">
+        <operation name="sayHello">
+            <input message="tns:SayHelloRequest"/>
+            <output message="tns:SayHelloResponse"/>
+        </operation>
+    </portType>
+</definitions>
+```
+
+✅ **In short:**  
+**WSDL = XML file describing what a SOAP web service does, what parameters it accepts, and where it is located.**
 
 ### What is UDDI?
 
