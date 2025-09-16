@@ -145,7 +145,7 @@ class BankAccount {
 
 **Example:**
 
-```xml
+```java
 abstract class Shape {
     abstract void draw(); // abstract method
 }
@@ -178,7 +178,7 @@ class Square extends Shape {
 
 **Example:**
 
-```xml
+```java
 class Animal {
     void eat() {
         System.out.println("Animal eats");
@@ -202,7 +202,7 @@ class Dog extends Animal { // IS-A relationship
 
 ### a) **Compile-time Polymorphism (Method Overloading)**
 
-```xml
+```java
 class Calculator {
     int add(int a, int b) { return a + b; }
     double add(double a, double b) { return a + b; }
@@ -211,7 +211,7 @@ class Calculator {
 
 ### b) **Runtime Polymorphism (Method Overriding)**
 
-```xml
+```java
 class Animal {
     void sound() { System.out.println("Animal makes sound"); }
 }
@@ -234,7 +234,7 @@ class Dog extends Animal {
 * **Object** → Instance of a class (e.g., myCar).
     
 
-```xml
+```java
 class Car {
     void drive() { System.out.println("Car is driving"); }
 }
@@ -250,7 +250,7 @@ Car c = new Car(); // object created
 * Same name as class, no return type.
     
 
-```xml
+```java
 class Student {
     String name;
     Student(String n) {
@@ -319,7 +319,7 @@ Perfect 👍 Let me give you a **single Java program** that demonstrates **all 4
 
 # 🔹 Java Program (Bank Example)
 
-```xml
+```java
 // 1. Abstraction (interface)
 interface BankOperations {
     void deposit(double amount);
