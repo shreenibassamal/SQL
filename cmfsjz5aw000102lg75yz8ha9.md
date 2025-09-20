@@ -173,3 +173,55 @@ Packages are directly tied to Java's access modifiers.
 * `java.time`: A modern and robust API for handling dates, times, and time zones (`LocalDate`, `LocalDateTime`, `Duration`).
     
 * `java.sql`: The JDBC (Java Database Connectivity) API for connecting to and interacting with databases (`Connection`, `Statement`, `ResultSet`).
+    
+
+### Access Modifiers
+
+**1\. Types:** The four access modifiers are `public`, `protected`, `default` (no modifier), and `private`.
+
+**2\.** `public`: The public modifier allows access from **any other class**. For classes, it means they can be accessed from any other package. 🌐
+
+**3\.** `protected`: The protected modifier allows access **within the same package and subclasses**. 🛡️
+
+**4\.** `default`: If no access modifier is specified, it's the default, allowing access **only within the same package**. 🏠
+
+**5\.** `private`: The private modifier restricts access to the **defining class only**. 🔒
+
+**6\. Class-Level Access:** Only `public` and `default` (no modifier) access modifiers are applicable for top-level classes.
+
+**7\. Member-Level Access:** Methods, constructors, and variables can use all four access modifiers to control visibility. 🧱
+
+### Access Modifiers: Extra Information 💡
+
+Here are some extra details about Java access modifiers that weren't on the slide!
+
+---
+
+#### 1\. The `public` Modifier in Detail 🌍
+
+* **Public Classes:** A class declared as `public` can be accessed from any other class in any package. However, there's a rule: a Java source file can have only **one** `public` class, and the filename **must** be the same as the class name (e.g., [`MyClass.java`](http://MyClass.java) must contain `public class MyClass`). This is a key part of how the Java compiler and JVM locate and load classes.
+    
+* **Public Members:** Public methods and variables can be called or accessed by any other class. This is how you expose the functionality of your class to the rest of your program and to other packages.
+    
+
+#### 2\. The `protected` Modifier in Action 🛡️
+
+* **Inheritance is Key:** The `protected` modifier is specifically designed for **inheritance**. It provides a middle ground between `public` and `private`.
+    
+* **Access from a different package:** A subclass in a different package can access the `protected` members of its superclass. However, it can only access those members on **instances of the subclass itself**, not on an instance of the superclass. This prevents unrestricted access while still allowing for proper inheritance.
+    
+* **Analogy:** Think of `protected` as a family secret. 🤫 Members of the immediate family (the same package) know it. A child who moves away (a subclass in a different package) also knows the secret, but they can't go around telling it to people outside the family.
+    
+
+#### 3\. The `default` (Package-Private) Modifier 🏘️
+
+* **No Keyword:** The `default` access modifier is unique because it has **no keyword**. You just omit the access modifier altogether.
+    
+* **Use Case:** This modifier is great for classes or members that are only meant to be used by other classes within the same functional unit or package. It helps to encapsulate and hide implementation details that aren't needed by outside code.
+    
+
+#### 4\. The `private` Modifier in Detail 🤫
+
+* **Encapsulation:** The primary purpose of the `private` modifier is to enforce **encapsulation**. It hides a class's internal state and implementation details from the outside world. This is a core principle of object-oriented programming.
+    
+* **Getters and Setters:** You often access `private` variables through public methods called **getters** and **setters**. This gives you control over how the data is read and modified, allowing you to add validation or other logic.
